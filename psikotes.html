@@ -1,0 +1,146 @@
+ <!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kuis Tes Logika dan Bahasa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    .question {
+      margin-bottom: 15px;
+    }
+    #quiz, #result {
+      display: none;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .correct {
+      color: green;
+    }
+    .incorrect {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Gambar Pembuat Kuis -->
+  <div style="text-align: center;">
+    <img src="https://drive.google.com/uc?export=view&id=16lweVNEukyeaXkvWCPU32kBn0bfbL3g5" alt="Foto Pembuat Kuis" width="150" style="border-radius: 50%;">
+    <h3>Disusun oleh: Torus Manuntun Nababan, S.Pd.,M.Pd</h3>
+  </div>
+
+  <h2>Form Identitas</h2>
+  <form id="identityForm">
+    <label>Nama (lengkap dengan gelar): <input type="text" name="nama" required></label><br><br>
+    <label>Unit Kerja: <input type="text" name="unit" required></label><br><br>
+    <label>Kecamatan: <input type="text" name="unit" required></label><br><br>
+    <label>Kabupaten: <input type="text" name="unit" required></label><br><br>
+    <label>Usia(angka saja): <input type="number" name="usia" required></label><br><br>
+    <label>Pekerjaan:</label><br>
+    <label><input type="checkbox" name="pekerjaan" value="Kepala Sekolah"> Kepala Sekolah</label><br>
+    <label><input type="checkbox" name="pekerjaan" value="Guru ASN"> Guru ASN</label><br>
+    <label><input type="checkbox" name="pekerjaan" value="Guru Honor"> Guru Honor</label><br><br>
+    <button type="submit">Mulai Kuis</button>
+  </form>
+
+  <div id="quiz">
+    <h2>Kuis Logika & Bahasa (20 Soal)</h2>
+    <form id="quizForm">
+      <div class="question">1. 3 + 4 = <input type="text" name="q1"></div>
+      <div class="question">2. 5 x 6 = <input type="text" name="q2"></div>
+      <div class="question">3. 9 - 2 = <input type="text" name="q3"></div>
+      <div class="question">4. 15 / 3 = <input type="text" name="q4"></div>
+      <div class="question">5. Bilangan setelah 7 adalah? <input type="text" name="q5"></div>
+      <div class="question">6. Antonim dari 'besar' adalah? <input type="text" name="q6"></div>
+      <div class="question">7. Sinonim dari 'pandai' adalah? <input type="text" name="q7"></div>
+      <div class="question">8. 2 x 8 = <input type="text" name="q8"></div>
+      <div class="question">9. Jika hari ini Senin, maka besok adalah? <input type="text" name="q9"></div>
+      <div class="question">10. 12 + 8 = <input type="text" name="q10"></div>
+      <div class="question">11. 100 - 55 = <input type="text" name="q11"></div>
+      <div class="question">12. Huruf setelah C adalah? <input type="text" name="q12"></div>
+      <div class="question">13. Antonim dari 'tinggi' adalah? <input type="text" name="q13"></div>
+      <div class="question">14. Sinonim dari 'marah' adalah? <input type="text" name="q14"></div>
+      <div class="question">15. 7 x 3 = <input type="text" name="q15"></div>
+      <div class="question">16. 9 + 6 = <input type="text" name="q16"></div>
+      <div class="question">17. 10 / 2 = <input type="text" name="q17"></div>
+      <div class="question">18. Lawan kata dari 'cepat'? <input type="text" name="q18"></div>
+      <div class="question">19. Persamaan kata dari 'hebat'? <input type="text" name="q19"></div>
+      <div class="question">20. Jika 5 x 5 = ? <input type="text" name="q20"></div>
+      <br>
+      <button type="submit">Selesai & Lihat Hasil</button>
+    </form>
+  </div>
+
+  <div id="result">
+    <h2>Hasil Kuis</h2>
+    <p id="score"></p>
+    <p id="message" class="bold"></p>
+    <p id="wrongCount"></p>
+    <h3>Jawaban Benar dan Jawaban Anda</h3>
+    <ul id="answerReview"></ul>
+  </div>
+
+  <script>
+    const identityForm = document.getElementById('identityForm');
+    const quiz = document.getElementById('quiz');
+    const quizForm = document.getElementById('quizForm');
+    const result = document.getElementById('result');
+    const scoreDisplay = document.getElementById('score');
+    const messageDisplay = document.getElementById('message');
+    const wrongCountDisplay = document.getElementById('wrongCount');
+    const answerReview = document.getElementById('answerReview');
+
+    const answers = {
+      q1: "7", q2: "30", q3: "7", q4: "5", q5: "8",
+      q6: "kecil", q7: "cerdas", q8: "16", q9: "selasa", q10: "20",
+      q11: "45", q12: "d", q13: "pendek", q14: "emosi", q15: "21",
+      q16: "15", q17: "5", q18: "lambat", q19: "luar biasa", q20: "25"
+    };
+
+    identityForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      identityForm.style.display = 'none';
+      quiz.style.display = 'block';
+    });
+
+    quizForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      let score = 0;
+      let wrongCount = 0;
+      answerReview.innerHTML = "";
+
+      const userAnswers = new FormData(quizForm);
+      let number = 1;
+
+      for (const [key, correctAnswer] of Object.entries(answers)) {
+        const userAnswerRaw = userAnswers.get(key) || "";
+        const userAnswer = userAnswerRaw.trim().toLowerCase();
+        const correct = correctAnswer.toLowerCase();
+
+        const li = document.createElement("li");
+        if (userAnswer === correct) {
+          score += 10;
+          li.innerHTML = `Soal ${number}: ✅ <span class="correct">Jawaban Benar: ${correctAnswer}</span>`;
+        } else {
+          wrongCount++;
+          li.innerHTML = `Soal ${number}: ❌ <span class="incorrect">Jawaban Anda: ${userAnswerRaw || "(kosong)"}</span> | Jawaban Benar: ${correctAnswer}`;
+        }
+        answerReview.appendChild(li);
+        number++;
+      }
+
+      quiz.style.display = 'none';
+      result.style.display = 'block';
+      scoreDisplay.innerText = `Skor Anda: ${score}`;
+      messageDisplay.innerText = score > 70
+        ? "Selamat Anda Tergolong Manusia Yang Pintar"
+        : "Maaf Anda Masih Kurang Pintar, Perlu Belajar Lagi";
+      wrongCountDisplay.innerText = `Jumlah Soal Salah: ${wrongCount} dari 20 soal.`;
+    });
+  </script>
+</body>
+</html>
